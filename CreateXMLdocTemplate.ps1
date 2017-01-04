@@ -24,7 +24,7 @@ $xmlWriter.WriteStartElement("AMD.LOCAL")
 $xmlWriter.WriteComment('AMD LOCAL DATA Center Information')
 $xmlWriter.WriteStartElement("Servers")
 $xmlWriter.WriteElementString("Name","SERVER01")
-$xmlWriter.WriteElementString("IP","10.30.23.45")
+$xmlWriter.WriteElementString("IP","10.40.23.45")
 $xmlWriter.WriteEndElement # <-- Closing Servers
  
 # Write Close Tag for Root Element
