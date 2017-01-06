@@ -2,14 +2,14 @@
     
     Import-Module pslogging
     $logpath = “\\FILESRV\DomainShare\admins\logs\powerShellScripts\AllSessionDisconnect.log”
-    Start-Log -LogPath “\\FILESRV\DomainShare\admins\logs\powerShellScripts\logs” -LogName “AllSessionDisconnect.log” -ScriptVersion “1.0” 
+    Start-Log -LogPath “\\FILESRV\DomainShare\admins\logs\powerShellScripts\” -LogName “AllSessionDisconnect.log” -ScriptVersion “1.0” 
 ##############################################################################################################################################   
  #Set Send-MailMessage Email Variables:
  $date = Get-Date -Format d-MMMM-yyyy  
  $smtp = "smtp.gmail.com"
  $smtpPort = "587" 
  $from = "AMD Session Disconnect Log <advtalk28@gmail.com>" 
- $to = "AMD ADMIN <alvin.vaughn@integrityitgroup.net>" 
+ $to = "AMD ADMIN <alvin.vaughn@integrityitgroup.net>, , Alvin Mobile <9109644152@tmomail.net>" 
  $subject = "Backup on $date" 
  $body = "See attached log file from AMD Database Automated backup for: $date"
  $attachment = "\\FILESRV\DomainShare\admins\logs\powerShellScripts\AllSessionDisconnect.log" 
@@ -18,7 +18,7 @@
  
 #Credentials:
 #Use the CreateHashPW.ps1 to create hashed password file used in $SecureStringPassword
-$EncryptedPasswordFile = '\\FILESRV\DomainShare\admins\scripts\smtpcs.txt'
+$EncryptedPasswordFile = '\\FILESRV\DomainShare\admins\scripts\filesrvsmtpcs.txt'
 $SecurePassword = Get-Content -Path $EncryptedPasswordFile | ConvertTo-SecureString
 $login = "advtalk28@gmail.com"
 $credentials = New-Object System.Management.Automation.Pscredential -Argumentlist $login,$SecurePassword
@@ -64,7 +64,7 @@ Write-LogInfo -LogPath $logpath -TimeStamp -ErrorAction Stop "Finished setting S
              }                    
                 Send-MailMessage @messageParameters -BodyAsHtml 
              } catch {                        
-                $_ | Out-File “\\FILESRV\DomainShare\admins\logs\powerShellScripts\logs\ProblemsSendingEmailReport.txt" -Append -Width 1000
+                $_ | Out-File “\\FILESRV\DomainShare\admins\logs\powerShellScripts\ProblemsSendingEmailReport.txt" -Append -Width 1000
                     #$errorOut =  $Error[0].Exception.GetType().FullName
                     #Write-LogError -LogPath $logpath $errorOut                        
            } 
