@@ -30,5 +30,5 @@ $action.Arguments = "$TaskArg"
 
 $TaskAction = New-ScheduledTaskAction -Execute "$TaskCommand" -Argument "$TaskArg" 
 #$TaskTrigger = New-ScheduledTaskTrigger -At $TaskStartTime -Once
-$trigger =  New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 09:00Am 
+$trigger =  New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 09:30Am 
 Register-ScheduledTask -Action $TaskAction -Trigger $trigger -TaskName "$TaskName" -User "amd\amd.admin" -Password "ABCcty99##" #-RunLevel Highest
