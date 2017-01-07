@@ -1,18 +1,19 @@
 ﻿
-function preboot-msg-morning{
+function aptBackUpMessage{
 
 $stamp = Get-Date -Format d-MMMM-yyyy-HHmm
 Import-Module pslogging
-$logpath = “\\FILESRV\DomainShare\admins\logs\powerShellScripts\morningUpdatesMSG$stamp.log”
-Start-Log -LogPath “\\FILESRV\DomainShare\admins\logs\powerShellScripts\” -LogName “morningUpdatesMSG$stamp.log” -ScriptVersion “1.0” 
+$logpath = “\\FILESRV\DomainShare\admins\logs\powerShellScripts\AptWeeklyBackUpMSG$stamp.log”
+Start-Log -LogPath “\\FILESRV\DomainShare\admins\logs\powerShellScripts\” -LogName “AptWeeklyBackUpMSG$stamp.log” -ScriptVersion “1.0” 
 
 #General Email Variables:
  $date = Get-Date -Format d-MMMM-yyyy
  $smtp = "smtp.gmail.com"
  $smtpPort = "587" 
  $from = "AMD ADMIN <advtalk28@gmail.com>" 
- $to = "AMD ADMIN <alvin.vaughn@integrityitgroup.net>, Alvin Vaughn <alvin@vaughns.net>" 
- $subject = "MOrning Update Message for $date" 
+ $to = "AMD ADMIN <alvin.vaughn@integrityitgroup.net>, Alvin Vaughn <alvin@vaughns.net>"
+ $cc = "Alvin Work <alvin.vaughn@harrishealth.org>" 
+ $subject = "AptSurv Weekly Update Message for $date" 
  $body = "See attached log file for: $date" 
  Write-LogInfo -LogPath $logpath -TimeStamp -ErrorAction Stop "Finished setting Email Variables"
 
@@ -28,24 +29,26 @@ $credentials = New-Object System.Management.Automation.Pscredential -Argumentlis
 Import-module activedirectory
 Write-LogInfo -LogPath $logpath -ToScreen "AD Module Imported"
 
-$C=get-adcomputer -filter {OperatingSystem -NotLike "*Server*"} `
+$C=get-adcomputer -filter {OperatingSystem -NotLike "*Server*" -and Name -NotLike "*Any*"} `
 -searchbase "OU=virtualpcs,OU=amdMain,DC=amd,DC=local"| ForEach-Object {$_.Name}
 foreach($obj in $C) {
             $error = $null
             if (Test-Connection -ComputerName $obj -Quiet) {
-                    $reachable = "Update reminder sent to " +  $obj
+                    $reachable = "Message sent to " +  $obj
                     Write-LogInfo -LogPath $logpath  $reachable  
+                   
                     Invoke-command -computername $obj -scriptblock {
                         $GetUserName = [Environment]::UserName
-                        $CmdMessage = { msg * 'Hello' $GetUserName  ", Reminder: Weekly backups and system updates are schedule for 8PM CST today. Please close all sessions and disconnect prior to this time."}
+                        $CmdMessage = { msg * 'Hello' $GetUserName  ", Reminder: Weekly database backups are schedule for 8PM CST today. Please close MS Access and disconnect prior to this time."}
                         $CmdMessage | Invoke-Expression
-                    } 
+                    }
+                     
                 } else {
                    $unreachable = $obj + "  could not be reached."
                    Write-LogWarning -LogPath $logpath  $unreachable 
                 }
     }
-      Write-LogInfo -LogPath $logpath -TimeStamp "Morning Message Sent"
+      Write-LogInfo -LogPath $logpath -TimeStamp "Message sent to all virtual pcs listed above except where indicated"
 
 #Send an Email to User  
             $ErrorActionPreference = "Stop"                        
@@ -77,17 +80,17 @@ foreach($obj in $C) {
 
 }
 
-preboot-msg-morning
+aptBackUpMessage
 
 <# Tasker Script
 
-$TaskName = "MorningUpdateMSG"
+$TaskName = "AMD Database Backup MSG"
 # The description of the task
-$TaskDescr = "Weekly Update Message"
+$TaskDescr = "Announce Weekly AMD Database Backup"
 # The Task Action command
 $TaskCommand = "powershell.exe"
 # The PowerShell script to be executed
-$TaskScript = '\\FILESRV\DomainShare\admins\scripts\GitHub\powershellscripts\morningUpdateMessage.ps1'
+$TaskScript = '\\FILESRV\DomainShare\admins\scripts\GitHub\powershellscripts\AptWeeklyBackUpMessage.ps1'
 # The Task Action command argument
 $TaskArg = "-WindowStyle Hidden -NonInteractive -Executionpolicy unrestricted -file $TaskScript"
 
@@ -113,7 +116,7 @@ $action.Arguments = "$TaskArg"
 
 $TaskAction = New-ScheduledTaskAction -Execute "$TaskCommand" -Argument "$TaskArg" 
 #$TaskTrigger = New-ScheduledTaskTrigger -At $TaskStartTime -Once
-$trigger =  New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 09:30Am 
+$trigger =  New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 05:00Pm 
 Register-ScheduledTask -Action $TaskAction -Trigger $trigger -TaskName "$TaskName" -User "amd\amd.admin" -Password "ABCcty99##" #-RunLevel Highest
 
 
