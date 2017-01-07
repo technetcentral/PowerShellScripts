@@ -33,9 +33,13 @@ $C=get-adcomputer -filter {OperatingSystem -NotLike "*Server*" -and Name -NotLik
 foreach($obj in $C) {
             $error = $null
             if (Test-Connection -ComputerName $obj -Quiet) {
-                  $reachable = "Update reminder sent to " +  $obj
-                  Write-LogInfo -LogPath $logpath  $reachable  
-                   Invoke-command -computername $obj -scriptblock {msg * "Weekly Updates are scheduled for installation soon. All sessions are scheduled for disconnect at 8:00pm today."} 
+                    $reachable = "Update reminder sent to " +  $obj
+                    Write-LogInfo -LogPath $logpath  $reachable  
+                    Invoke-command -computername $obj -scriptblock {
+                        $GetUserName = [Environment]::UserName
+                        $CmdMessage = { msg * 'Hello' $GetUserName  ", Reminder: Weekly backups and system updates are schedule for 8PM CST today. Please close all sessions and disconnect prior to this time."}
+                        $CmdMessage | Invoke-Expression
+                    } 
                 } else {
                    $unreachable = $obj + "  could not be reached."
                    Write-LogWarning -LogPath $logpath  $unreachable 
