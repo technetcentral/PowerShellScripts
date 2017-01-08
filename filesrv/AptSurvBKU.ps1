@@ -43,8 +43,11 @@ Write-LogInfo -LogPath $logpath -TimeStamp -ErrorAction Stop "Starting Backup of
     } elseif ($path -eq $false) { 
             cd backup:\ 
             mkdir $date 
-            copy-Item  -Recurse $source -Destination $datedFolder 
-            #$backup_log = Dir -Recurse $datedFolder | out-File "$datedFolder\AMD-DB-backup_log.txt" 
+            $ExcludeFolders = @("%DfsrPrivate%")
+            Get-ChildItem -Path $source -Exclude $ExcludeFolders |
+            #Copy-Item -Destination $TO -force -recurse
+            copy-Item  -Recurse  -Destination $datedFolder
+            #copy-Item  -Recurse $source -Destination $datedFolder -Exclude 
             $backup_log = Dir -Recurse $datedFolder  | out-File $logpath -Append ascii -Width 100
             #$attachment1 = "$datedFolder\AMD-DB-backup_log.txt" 
 

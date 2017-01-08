@@ -50,7 +50,7 @@ foreach($obj in $C) {
     }
       Write-LogInfo -LogPath $logpath -TimeStamp "Message sent to all virtual pcs listed above except where indicated"
 
-#Send an Email to User  
+#Send an Email  
             $ErrorActionPreference = "Stop"                        
         try {
             
@@ -118,8 +118,5 @@ $TaskAction = New-ScheduledTaskAction -Execute "$TaskCommand" -Argument "$TaskAr
 #$TaskTrigger = New-ScheduledTaskTrigger -At $TaskStartTime -Once
 $trigger =  New-ScheduledTaskTrigger -Weekly -DaysOfWeek Friday -At 05:00Pm 
 Register-ScheduledTask -Action $TaskAction -Trigger $trigger -TaskName "$TaskName" -User "amd\amd.admin" -Password "ABCcty99##" #-RunLevel Highest
-
-
-
 
 #>
